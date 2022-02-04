@@ -6,11 +6,11 @@ import { find } from 'geo-tz'
 export class TimeService {
   private moment = moment
 
-  private getTimezone(location: { lon: number; lat: number }) {
-    return find(location.lat, location.lon)
+  private getTimezone(location: { longitude: number; latitude: number }) {
+    return find(location.latitude, location.longitude)
   }
 
-  utcTime(time: string, location: { lon: number; lat: number }) {
+  utcTime(time: string, location: { longitude: number; latitude: number }) {
     console.log()
     const [timezone] = this.getTimezone(location)
     const utcTime = this.moment.tz(time, 'HHmm', timezone).utc().format('HH:mm')
