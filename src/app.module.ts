@@ -4,6 +4,9 @@ import { UsersModule } from './users/users.module'
 import { TimeModule } from './time/time.module'
 import { MomentModule } from '@ccmos/nestjs-moment'
 import { MongooseModule } from '@nestjs/mongoose'
+import { Cron, ScheduleModule } from '@nestjs/schedule'
+import { CronModule } from './cron/cron.module'
+import { WeatherModule } from './weather/weather.module'
 
 @Module({
   imports: [
@@ -14,6 +17,9 @@ import { MongooseModule } from '@nestjs/mongoose'
     MomentModule.forRoot({
       tz: 'Europe/London',
     }),
+    ScheduleModule.forRoot(),
+    CronModule,
+    WeatherModule,
   ],
   controllers: [],
   providers: [],

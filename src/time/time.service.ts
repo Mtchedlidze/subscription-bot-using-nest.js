@@ -11,9 +11,12 @@ export class TimeService {
   }
 
   utcTime(time: string, location: { longitude: number; latitude: number }) {
-    console.log()
     const [timezone] = this.getTimezone(location)
     const utcTime = this.moment.tz(time, 'HHmm', timezone).utc().format('HH:mm')
     return utcTime
+  }
+
+  formatTime(time: Date) {
+    return this.moment(time, 'HHmm').format('HH:mm')
   }
 }

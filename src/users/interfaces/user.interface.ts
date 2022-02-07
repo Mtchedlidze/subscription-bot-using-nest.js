@@ -1,6 +1,6 @@
 import { Document } from 'mongoose'
 export interface User extends Document {
   chatID: number
-  location: { lon: number; lat: number }
+  location: { longitude: number; latitude: number }
   time: string
 }

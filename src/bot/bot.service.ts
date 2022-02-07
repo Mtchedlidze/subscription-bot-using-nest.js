@@ -13,34 +13,45 @@ export class WeatherBot {
   ) {}
 
   @Start()
-  async start(ctx: Context) {
+  private async start(ctx: Context) {
     await ctx.reply(Reply.START, {
       parse_mode: 'HTML',
     })
   }
 
   @Hears('/proceed')
-  async subscribeUser(ctx: Context) {
+  private async subscribeUser(ctx: Context) {
     await this.usersService.addUser(ctx.chat.id)
     await ctx.reply(Reply.REQUEST_TIME)
   }
 
   @Hears(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/)
-  async handleUserTime(ctx: Context) {
+  private async handleUserTime(ctx: Context) {
     if ('text' in ctx.message) {
       const { id } = ctx.chat
       const { text: time } = ctx.message
       await this.usersService.update({ time }, id)
+      await ctx.reply(Reply.REQUEST_LOCATION, {
+        reply_markup: {
+          keyboard: [[{ text: 'location', request_location: true }]],
+        },
+      })
     }
   }
 
   @On('location')
-  async handleUserLocation(ctx: Context) {
+  private async handleUserLocation(ctx: Context) {
     if ('location' in ctx.message) {
       const { location } = ctx.message
       const { id } = ctx.chat
-      const user = await this.usersService.update({ location }, id)
-      console.log(user)
+
+      const { time } = await this.usersService.findOne(id)
+
+      const updatedTime = this.timeService.utcTime(time, location)
+
+      await this.usersService.update({ location, time: updatedTime }, id)
+
+      await ctx.reply(Reply.FINISH)
     }
   }
 }

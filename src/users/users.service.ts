@@ -8,10 +8,21 @@ import { User } from './interfaces/user.interface'
 export class UsersService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  addUser(chatID: number): Promise<User> {
-    const user = new this.userModel({ chatID })
+  async findOne(chatID: number): Promise<User> {
+    return this.userModel.findOne({ chatID })
+  }
 
-    return user.save()
+  findUsers(time: string) {
+    return this.userModel.find({ time })
+  }
+
+  async addUser(chatID: number): Promise<User> {
+    const userExists = await this.findOne(chatID)
+
+    if (!userExists) {
+      const user = new this.userModel({ chatID })
+      return user.save()
+    }
   }
 
   async update(properties: Partial<UpdateDto>, chatID: number): Promise<User> {
