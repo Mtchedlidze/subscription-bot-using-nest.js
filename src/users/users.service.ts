@@ -12,10 +12,6 @@ export class UsersService {
     return this.userModel.findOne({ chatID })
   }
 
-  findUsers(time: string) {
-    return this.userModel.find({ time })
-  }
-
   async addUser(chatID: number): Promise<User> {
     const userExists = await this.findOne(chatID)
 
