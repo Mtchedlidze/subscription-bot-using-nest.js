@@ -4,19 +4,25 @@ import { find } from 'geo-tz'
 
 @Injectable()
 export class TimeService {
-  private moment = moment
+  moment = moment
 
-  private getTimezone(location: { longitude: number; latitude: number }) {
+  private getTimezone(location: {
+    longitude: number
+    latitude: number
+  }): string[] {
     return find(location.latitude, location.longitude)
   }
 
-  utcTime(time: string, location: { longitude: number; latitude: number }) {
+  utcTime(
+    time: string,
+    location: { longitude: number; latitude: number }
+  ): string {
     const [timezone] = this.getTimezone(location)
     const utcTime = this.moment.tz(time, 'HHmm', timezone).utc().format('HH:mm')
     return utcTime
   }
 
-  formatTime(time: Date) {
+  formatTime(time: Date): string {
     return this.moment(time, 'HHmm').format('HH:mm')
   }
 }

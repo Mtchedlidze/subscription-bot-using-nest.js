@@ -2,19 +2,18 @@ import { Hears, On, Start, Update } from 'nestjs-telegraf'
 import { TimeService } from 'src/time/time.service'
 import { UsersService } from 'src/users/users.service'
 import { Context } from 'telegraf'
-import { Reply } from './commands/reply.bot'
+import { ReplyEnum } from './commands/reply.bot'
 
 @Update()
 export class WeatherBot {
-  reply: Reply
   constructor(
     private readonly timeService: TimeService,
-    private readonly usersService: UsersService,
+    private readonly usersService: UsersService
   ) {}
 
   @Start()
   private async start(ctx: Context) {
-    await ctx.reply(Reply.START, {
+    await ctx.reply(ReplyEnum.START, {
       parse_mode: 'HTML',
     })
   }
@@ -22,7 +21,7 @@ export class WeatherBot {
   @Hears('/proceed')
   private async subscribeUser(ctx: Context) {
     await this.usersService.addUser(ctx.chat.id)
-    await ctx.reply(Reply.REQUEST_TIME)
+    await ctx.reply(ReplyEnum.REQUEST_TIME)
   }
 
   @Hears(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/)
@@ -31,7 +30,7 @@ export class WeatherBot {
       const { id } = ctx.chat
       const { text: time } = ctx.message
       await this.usersService.update({ time }, id)
-      await ctx.reply(Reply.REQUEST_LOCATION, {
+      await ctx.reply(ReplyEnum.REQUEST_LOCATION, {
         reply_markup: {
           keyboard: [[{ text: 'location', request_location: true }]],
         },
@@ -51,7 +50,7 @@ export class WeatherBot {
 
       await this.usersService.update({ location, time: updatedTime }, id)
 
-      await ctx.reply(Reply.FINISH)
+      await ctx.reply(ReplyEnum.FINISH)
     }
   }
 }
